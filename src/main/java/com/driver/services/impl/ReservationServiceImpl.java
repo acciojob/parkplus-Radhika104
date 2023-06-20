@@ -25,50 +25,50 @@ public class ReservationServiceImpl implements ReservationService {
     ParkingLotRepository parkingLotRepository3;
     @Override
     public Reservation reserveSpot(Integer userId, Integer parkingLotId, Integer timeInHours, Integer numberOfWheels) throws Exception {
-       try {
-           ParkingLot parkingLot = parkingLotRepository3.findById(parkingLotId).get();
-           User user = userRepository3.findById(userId).get();
 
-           List<Spot> list = parkingLot.getSpotList();
+        try {
+            ParkingLot parkingLot = parkingLotRepository3.findById(parkingLotId).get();
+            User user = userRepository3.findById(userId).get();
+            Reservation reservation = new Reservation();
 
-           SpotType spotType = SpotType.TWO_WHEELER;
-           if (numberOfWheels > 2 && numberOfWheels <= 4) {
-               spotType = SpotType.FOUR_WHEELER;
-           } else if (numberOfWheels > 4) spotType = SpotType.OTHERS;
-           int minPrice = Integer.MAX_VALUE;
-           int id = 0;
-           for (Spot spot : list) {
-               if (spot.getSpotType() == spotType && spot.getOccupied() == Boolean.FALSE) {
-                   minPrice = Math.min(spot.getPricePerHour() * timeInHours, minPrice);
-                   System.out.println(minPrice + " " + spot.getId());
-                   id = spot.getId();
-               }
-           }
-           if (id == 0) throw new Exception("Cannot make reservation");
+            Spot spot1 = null;
+            int minCost = Integer.MAX_VALUE;
 
+            for (Spot spot : parkingLot.getSpotList()) {
+                if (!spot.getOccupied() && numberOfWheels <= 2 && spot.getSpotType() == SpotType.TWO_WHEELER) {
+                    if (minCost >= spot.getPricePerHour()) {
+                        minCost = spot.getPricePerHour();
+                        spot1 = spot;
+                    }
+                } else if (!spot.getOccupied() && numberOfWheels <= 4 && spot.getSpotType() == SpotType.FOUR_WHEELER) {
+                    if (minCost >= spot.getPricePerHour()) {
+                        minCost = spot.getPricePerHour();
+                        spot1 = spot;
+                    }
+                } else {
+                    if (!spot.getOccupied() && minCost >= spot.getPricePerHour()) {
+                        minCost = spot.getPricePerHour();
+                        spot1 = spot;
+                    }
+                }
+            }
+            if (spot1 == null) {
+                throw new Exception("Cannot make reservation");
+            }
+            spot1.setOccupied(Boolean.TRUE);
+            reservation.setSpot(spot1);
+            reservation.setUser(user);
+            reservation.setNumberOfHours(timeInHours);
 
-           Spot spot = spotRepository3.findById(id).get();
-           Reservation reservation = new Reservation();
-           reservation.setSpot(spot);
-           reservation.setUser(user);
-           reservation.setNumberOfHours(timeInHours);
-           //reservation.setPayment();
-           spot.setOccupied(Boolean.TRUE);
-           //saving it before to get PK of reservation to avoid collisions
-           reservation = reservationRepository3.save(reservation);
+            spot1.getReservationList().add(reservation);
+            user.getReservationList().add(reservation);
 
+            userRepository3.save(user);
+            spotRepository3.save(spot1);
 
-           user.getReservationList().add(reservation);
-           spot.getReservationList().add(reservation);
-
-
-           userRepository3.save(user);
-           spotRepository3.save(spot);
-
-           return reservation;
-       }catch(Exception e)
-       {
-           return null;
-       }
+            return reservation;
+        } catch (Exception ex) {
+            throw new Exception(ex.getMessage());
+        }
     }
 }
