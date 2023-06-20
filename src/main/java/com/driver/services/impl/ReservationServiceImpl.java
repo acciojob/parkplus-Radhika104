@@ -32,12 +32,6 @@ public class ReservationServiceImpl implements ReservationService {
      if(user==null) throw new Exception("Cannot make reservation");
 
      List<Spot> list=parkingLot.getSpotList();
-     Collections.sort(list, new Comparator<Spot>() {
-         @Override
-         public int compare(Spot o1, Spot o2) {
-             return o1.getPricePerHour()- o2.getPricePerHour();
-         }
-     });
 
      SpotType spotType=SpotType.TWO_WHEELER;
         if(numberOfWheels>2 && numberOfWheels<=4)
@@ -52,6 +46,7 @@ public class ReservationServiceImpl implements ReservationService {
          if(spot.getSpotType()==spotType && spot.getOccupied()==Boolean.FALSE)
          {
              minPrice=Math.min(spot.getPricePerHour()*timeInHours,minPrice);
+             System.out.println(minPrice+" "+spot.getId());
              id= spot.getId();
          }
      }
