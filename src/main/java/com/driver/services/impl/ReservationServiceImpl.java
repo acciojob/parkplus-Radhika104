@@ -68,7 +68,7 @@ public class ReservationServiceImpl implements ReservationService {
 
             return reservation;
         } catch (Exception ex) {
-            throw new Exception(ex.getMessage());
+            return null;
         }
     }
 }
