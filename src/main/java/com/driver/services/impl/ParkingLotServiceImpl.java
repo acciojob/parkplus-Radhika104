@@ -36,7 +36,7 @@ public class ParkingLotServiceImpl implements ParkingLotService {
        else if(numberOfWheels>4) spot.setSpotType(SpotType.OTHERS);
        else spot.setSpotType(SpotType.TWO_WHEELER);
 
-       spot.setOccupied(false);
+       spot.setOccupied(Boolean.FALSE);
        ParkingLot parkingLot=parkingLotRepository1.findById(parkingLotId).get();
        spot.setParkingLot(parkingLot);
        parkingLot.getSpotList().add(spot);

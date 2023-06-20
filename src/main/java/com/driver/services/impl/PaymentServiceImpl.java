@@ -34,7 +34,7 @@ public class PaymentServiceImpl implements PaymentService {
         else paymentMode=PaymentMode.UPI;
         payment.setPaymentMode(paymentMode);
         payment.setPaymentCompleted(true);
-        reservation.getSpot().setOccupied(false);
+        reservation.getSpot().setOccupied(Boolean.FALSE);
         payment.setReservation(reservation);
 
         reservation.setPayment(payment);

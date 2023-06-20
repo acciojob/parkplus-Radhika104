@@ -49,7 +49,7 @@ public class ReservationServiceImpl implements ReservationService {
         int id=0;
      for(Spot spot:list)
      {
-         if(spot.getSpotType()==spotType && spot.getOccupied()==false)
+         if(spot.getSpotType()==spotType && spot.getOccupied()==Boolean.FALSE)
          {
              minPrice=Math.min(spot.getPricePerHour()*timeInHours,minPrice);
              id= spot.getId();
@@ -64,7 +64,7 @@ public class ReservationServiceImpl implements ReservationService {
      reservation.setUser(user);
      reservation.setNumberOfHours(timeInHours);
      //reservation.setPayment();
-        spot.setOccupied(true);
+        spot.setOccupied(Boolean.TRUE);
         //saving it before to get PK of reservation to avoid collisions
         reservation=reservationRepository3.save(reservation);
 
